@@ -1,0 +1,32 @@
+
+{% extends 'tcsiapp/main.html' %}
+
+{% block title %}
+    <title>twprojects</title>
+{% endblock title %}
+
+{% block content %}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <span>Welcome to TW Projects 
+                </span>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p> 
+                <small>
+                    Coding personal projects for fun with Python; Django; Apache; PostgreSQL; Amazon Linux; HTML, CSS, JS; DataTables; Bootstrap; ChartJS; RestAPI, and so on and so forth.... 
+                </small> 
+            </p> 
+            <p>Check out project(s) below:</p>
+            <p>
+                <a class="btn btn-outline-dark btn" href="{% url 'tcsiapp:tcsielement' %}" role="button" aria-pressed="true">TCSI Element: a product of Python web scraping</a>
+            </p>                                           
+        </div> 
+    </div>          
+</div>
+  
+{% endblock content %}

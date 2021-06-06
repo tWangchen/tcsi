@@ -1,0 +1,183 @@
+{% extends 'tcsiapp/main.html' %}
+
+{% block title %}
+  <title> tcsielement </title>
+{% endblock title %}
+
+{% block head %}
+    <!--datatables-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.2/js/dataTables.fixedColumns.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.2/css/fixedColumns.dataTables.min.css"> 
+
+    <style>
+      th , td { white-space: nowrap; }
+        div.dataTables_wrapper {
+            width: auto;
+            margin: 0 auto;
+        }
+    
+        th input {
+            width: 90%; 
+        }
+      </style> 
+{% endblock head %}
+
+{% block content %}
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <div class="container-fluid pt-1">
+    <table id="tcsielement_table" class="stripe cell-border order-column" style="width:100%">
+      <thead>
+        <tr>
+          <th>element_no</th>
+          <th>page_title</th>
+          <th>description</th>
+          <th>code_category</th>
+          <th>element_type</th>
+          <th>width</th>
+          <th>version</th>
+          <th>years_version_active</th>
+          <th>sub_header</th>
+          <th>value</th>
+          <th>meaning</th>
+          <th>derivation</th>
+          <th>spec_flag</th>
+          <th>retired</th>
+          <th>page_access_timestamp</th>
+          <th>page_url</th>
+          <th>page_harvestor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tcsielementrow in tcsi_list %}
+        <tr>
+          <td>{{ tcsielementrow.element_no }}</td>
+          <td>{{ tcsielementrow.page_title }}</td>
+          <td>{{ tcsielementrow.description }}</td>
+          <td>{{ tcsielementrow.code_category }}</td>
+          <td>{{ tcsielementrow.element_type }}</td>
+          <td>{{ tcsielementrow.width }}</td>
+          <td>{{ tcsielementrow.version }}</td>
+          <td>{{ tcsielementrow.years_version_active }}</td>
+
+          {% if tcsielementrow.sub_header %}
+            <td>{{ tcsielementrow.sub_header }}</td>
+          {% else %}
+            <td></td>
+          {% endif %}
+
+          {% if tcsielementrow.value %}
+            <td>{{ tcsielementrow.value }}</td>
+          {% else %}
+            <td></td>
+          {% endif %}
+
+          {% if tcsielementrow.meaning %}
+            <td>{{ tcsielementrow.meaning }}</td>
+          {% else %}
+            <td></td>
+          {% endif %}
+
+          {% if tcsielementrow.derivation %}
+            <td>{{ tcsielementrow.derivation }}</td>
+          {% else %}
+            <td></td>
+          {% endif %}
+
+          <td>{{ tcsielementrow.spec_flag }}</td>
+          <td>{{ tcsielementrow.retired }}</td>
+          <td>{{ tcsielementrow.page_access_timestamp }}</td>
+          
+          {% if tcsielementrow.page_url %}
+            <td><a href="{{ tcsielementrow.page_url }}" target="_blank">&nbsp;{{ tcsielementrow.page_url }}</a></td>
+          {% else %}
+            <td></td>
+          {% endif %}
+
+          <td>{{ tcsielementrow.page_harvestor }}</td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+            <th>element_no</th>
+            <th>page_title</th>
+            <th>description</th>
+            <th>code_category</th>
+            <th>element_type</th>
+            <th>width</th>
+            <th>version</th>
+            <th>years_version_active</th>
+            <th>sub_header</th>
+            <th>value</th>
+            <th>meaning</th>
+            <th>derivation</th>
+            <th>spec_flag</th>
+            <th>retired</th>
+            <th>page_access_timestamp</th>
+            <th>page_url</th>
+            <th>page_harvestor</th>        
+        </tr>
+      </tfoot>
+    </table>
+    <div style="text-align: center">
+      To see more data: scroll down/up or starting second column scroll right/left.
+      <a class="btn btn-outline-dark btn btn-sm" href="{% url 'tcsiapi:tcsielementapi' %}" target = "_blank" role="button" aria-pressed="true" style="float: right;">rest api endpoint</a> 
+      <a class="btn btn-outline-dark btn btn-sm" href="{% url 'tcsiapp:tcsielementcsv' %}" role="button" aria-pressed="true" style="float: right;">download csv</a> 
+    </div>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">About</h5>
+          <p class="card-text">Consolidated data scraped from numerous links indexed on <a href="https://www.tcsisupport.gov.au/elements" target = "_blank">https://www.tcsisupport.gov.au/elements</a></p>
+          <p class="card-text">Check out code repository: <a href="https://github.com/tWangchen/tcsi" target = "_blank">https://github.com/tWangchen/tcsi</a></p>
+        </div>
+    </div>
+  </div>
+
+  {% endblock content %}
+  
+  {% block scripts %}
+  <script>
+    $(document).ready(function() {
+        // Setup - add a text input to each footer cell
+        $('#tcsielement_table tfoot th').each( function (i) {
+            var title = $('#tcsielement_table thead th').eq( $(this).index() ).text();
+            $(this).html( '<input type="text" placeholder="Search '+title+'" data-index="'+i+'" />' );
+        } );
+      
+        // DataTable
+        var table = $('#tcsielement_table').DataTable( {
+            responsive:   true,
+            scrollY:        "350px",
+            scrollX:        true,
+            scrollCollapse: true,
+            paging:         false,
+            fixedHeader:  true,
+            fixedColumns:   {
+              leftColumns: 1
+            }
+        } );
+    
+        // Filter event handler
+        $( table.table().container() ).on( 'keyup', 'tfoot input', function () {
+            table
+                .column( $(this).data('index') )
+                .search( this.value )
+                .draw();
+        } );
+    } );
+
+    // Fade out spinner
+    $(window).on("load", function(){
+      $(".spinner-border").fadeOut("slow");
+    });
+  </script>
+  {% endblock scripts %}
